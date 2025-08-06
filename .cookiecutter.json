@@ -1,0 +1,30 @@
+{
+    "cookiecutter": {
+        "codeowner_github_usernames": "jtdub",
+        "full_name": "James Williams",
+        "email": "thedude@jtdub.com",
+        "github_org": "jtdub",
+        "app_name": "device_broker",
+        "verbose_name": "Device Broker",
+        "app_slug": "device-broker",
+        "project_slug": "nautobot-app-device-broker",
+        "repo_url": "https://github.com/jtdub/nautobot-app-device-broker",
+        "base_url": "device-broker",
+        "min_nautobot_version": "2.3.1",
+        "max_nautobot_version": "2.9999",
+        "camel_name": "DeviceBroker",
+        "project_short_description": "Device Broker",
+        "model_class_name": "None",
+        "open_source_license": "Apache-2.0",
+        "docs_base_url": "https://docs.nautobot.com",
+        "docs_app_url": "https://docs.nautobot.com/projects/device-broker/en/latest",
+        "_extensions": [
+            "local_extensions.camel_case_to_kebab",
+            "local_extensions.camel_case_to_words"
+        ],
+        "_template": "nautobot-app",
+        "_output_dir": "/Users/jtdub/Documents/code/cookiecutter-nautobot-app",
+        "_repo_dir": "nautobot-app",
+        "_checkout": null
+    }
+}

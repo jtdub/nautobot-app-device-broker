@@ -1,0 +1,15 @@
+---
+device_broker:
+  nautobot_ver: "2.3.1"
+  python_ver: "3.11"
+  # local: false
+  # compose_dir: "/full/path/to/nautobot-app-device-broker/development"
+
+# The following is an example of using MySQL as the database backend
+# ---
+# device_broker:
+#   compose_files:
+#     - "docker-compose.base.yml"
+#     - "docker-compose.redis.yml"
+#     - "docker-compose.mysql.yml"
+#     - "docker-compose.dev.yml"
