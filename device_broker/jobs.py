@@ -87,7 +87,7 @@ class DeviceBrokerJob(Job):
             return f"{device.display}: No secrets group, skipped."
 
         # Get appropriate platform driver
-        driver = get_platform_driver(device.platform.slug)
+        driver = get_platform_driver(device.platform)
         if driver is None:
             self.logger.error("No driver found for platform: %s. Skipping device %s.", device.platform, device.display)
             return f"{device.display}: No platform driver, skipped."

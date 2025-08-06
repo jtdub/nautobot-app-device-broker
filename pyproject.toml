@@ -1,7 +1,7 @@
 [tool.poetry]
 name = "device-broker"
 version = "0.1.0"
-description = "Device Broker"
+description = "Platform-agnostic network device command execution and automation toolkit for Nautobot"
 authors = ["James Williams <thedude@jtdub.com>"]
 license = "Apache-2.0"
 readme = "README.md"

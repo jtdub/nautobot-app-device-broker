@@ -15,7 +15,7 @@ class DeviceBrokerConfig(NautobotAppConfig):
     verbose_name = "Device Broker"
     version = __version__
     author = "James Williams"
-    description = "Device Broker."
+    description = "Platform-agnostic network device command execution and automation toolkit for Nautobot."
     base_url = "device-broker"
     required_settings = []
     min_version = "2.3.1"

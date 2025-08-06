@@ -205,20 +205,15 @@ def build(context, force_rm=False, cache=True):
 
 def _ensure_creds_env_file(context):
     """Ensure that the development/creds.env file exists."""
-    if not os.path.exists(
-        os.path.join(context.device_broker.compose_dir, "creds.env")
-    ):
+    if not os.path.exists(os.path.join(context.device_broker.compose_dir, "creds.env")):
         # Warn the user that the creds.env file does not exist and that we are copying the example file to it
-        print(
-            "⚠️⚠️ The creds.env file does not exist, using the example file to create it. ⚠️⚠️"
-        )
+        print("⚠️⚠️ The creds.env file does not exist, using the example file to create it. ⚠️⚠️")
         # Copy the creds.example.env file to creds.env
         shutil.copy(
-            os.path.join(
-                context.device_broker.compose_dir, "creds.example.env"
-            ),
+            os.path.join(context.device_broker.compose_dir, "creds.example.env"),
             os.path.join(context.device_broker.compose_dir, "creds.env"),
         )
+
 
 @task
 def generate_packages(context):
@@ -275,7 +270,9 @@ def lock(context, check=False, constrain_nautobot_ver=False, constrain_python_ve
             print(output.stderr, file=sys.stderr, end="")
         except UnexpectedExit:
             print("Unable to add Nautobot dependency with version constraint, falling back to git branch.")
-            command = f"poetry add --lock git+https://github.com/nautobot/nautobot.git#{context.device_broker.nautobot_ver}"
+            command = (
+                f"poetry add --lock git+https://github.com/nautobot/nautobot.git#{context.device_broker.nautobot_ver}"
+            )
             if constrain_python_ver:
                 command += f" --python {context.device_broker.python_ver}"
             run_command(context, command)

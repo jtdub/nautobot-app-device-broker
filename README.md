@@ -1,17 +1,7 @@
 # Device Broker
 
-<!--
-Developer Note - Remove Me!
-
-The README will have certain links/images broken until the PR is merged into `develop`. Update the GitHub links with whichever branch you're using (main etc.) if different.
-
-The logo of the project is a placeholder (docs/images/icon-device-broker.png) - please replace it with your app icon, making sure it's at least 200x200px and has a transparent background!
-
-To avoid extra work and temporary links, make sure that publishing docs (or merging a PR) is done at the same time as setting up the docs site on RTD, then test everything.
--->
-
 <p align="center">
-  <img src="https://raw.githubusercontent.com/jtdub/nautobot-app-device-broker/develop/docs/images/icon-device-broker.png" class="logo" height="200px">
+  <img src="https://raw.githubusercontent.com/jtdub/nautobot-app-device-broker/main/docs/images/icon-device-broker.png" class="logo" height="200px">
   <br>
   <a href="https://github.com/jtdub/nautobot-app-device-broker/actions"><img src="https://github.com/jtdub/nautobot-app-device-broker/actions/workflows/ci.yml/badge.svg?branch=main"></a>
   <a href="https://docs.nautobot.com/projects/device-broker/en/latest/"><img src="https://readthedocs.org/projects/nautobot-app-device-broker/badge/"></a>
@@ -23,35 +13,64 @@ To avoid extra work and temporary links, make sure that publishing docs (or merg
 
 ## Overview
 
-> Developer Note: Add a long (2-3 paragraphs) description of what the App does, what problems it solves, what functionality it adds to Nautobot, what external systems it works with etc.
+The Device Broker app is a comprehensive platform-agnostic solution for executing commands on network devices directly from Nautobot. It provides a unified interface for interacting with diverse network equipment regardless of vendor or platform, eliminating the need for network operators to manage separate tools or scripts for device interaction.
+
+Built on the powerful Netmiko library, Device Broker leverages Nautobot's existing device inventory, platform definitions, and secrets management to enable network operators to execute commands on single or multiple devices without needing to manage separate connection libraries or authentication mechanisms. The app supports both operational commands and configuration changes, making it a powerful tool for network automation workflows, troubleshooting, and bulk configuration management.
+
+### Key Features
+
+- **Universal Platform Support**: Supports any network device platform with a Netmiko driver through dynamic runtime configuration - no code changes required
+- **Multi-device Operations**: Execute commands across multiple devices simultaneously with intelligent device selection and filtering
+- **Flexible Targeting**: Select devices individually, by platform type, by location, or through combinations with automatic deduplication
+- **Seamless Authentication**: Complete integration with Nautobot's secrets groups for secure credential management
+- **Dual Operation Modes**: Support for both operational (read-only) and configuration commands with automatic mode switching
+- **Comprehensive Logging**: Detailed per-device logging with complete audit trails and error reporting
+- **Zero-Maintenance Platform Support**: Add new platform support through Nautobot configuration without app updates
+- **API Integration**: Full programmatic access through Nautobot's job execution APIs
+
+### Supported Platforms
+
+Device Broker supports any platform with a corresponding Netmiko driver, including:
+- **Cisco**: IOS, IOS-XE, NXOS, ASA
+- **Arista**: EOS  
+- **Juniper**: JunOS
+- **HPE/Aruba**: ProCurve, ArubaOS
+- **Fortinet**: FortiOS
+- **Dell**: Force10, PowerConnect
+- **Many others**: Expandable to any Netmiko-supported platform
 
 ### Screenshots
 
-> Developer Note: Add any representative screenshots of the App in action. These images should also be added to the `docs/user/app_use_cases.md` section.
+The Device Broker app provides an intuitive interface through Nautobot's job system for comprehensive network device command execution. The primary interface features:
 
-> Developer Note: Place the files in the `docs/images/` folder and link them using only full URLs from GitHub, for example: `![Overview](https://raw.githubusercontent.com/jtdub/nautobot-app-device-broker/develop/docs/images/app-overview.png)`. This absolute static linking is required to ensure the README renders properly in GitHub, the docs site, and any other external sites like PyPI.
+**Core Interface Elements:**
+- **Device Selection**: Multiple targeting methods including individual selection, platform filtering, location-based grouping, and combination targeting with automatic deduplication
+- **Command Input**: Multi-line command input supporting complex sequences and operational workflows  
+- **Execution Options**: Configuration mode toggle for operational vs. configuration commands with automatic mode switching
+- **Progress Monitoring**: Real-time job execution progress with detailed per-device status and error tracking
+- **Result Display**: Comprehensive output showing command results, errors, execution details, and complete audit trails
 
-More screenshots can be found in the [Using the App](https://docs.nautobot.com/projects/device-broker/en/latest/user/app_use_cases/) page in the documentation. Here's a quick overview of some of the app's added functionality:
+**Key Capabilities Demonstrated:**
+- Unified command execution across multi-vendor environments without vendor-specific tools
+- Flexible device targeting for precise operational control with intelligent filtering
+- Secure credential handling through Nautobot's built-in secrets management with no hardcoded credentials
+- Detailed audit trails for compliance and troubleshooting with comprehensive logging
+- Scalable execution supporting both individual devices and large device populations with robust error handling
+- Zero-maintenance platform support through dynamic configuration
 
-![](https://raw.githubusercontent.com/jtdub/nautobot-app-device-broker/develop/docs/images/placeholder.png)
+The interface eliminates the complexity of managing multiple vendor-specific tools while providing enterprise-grade logging, error handling, and result management.
 
-## Try it out!
-
-> Developer Note: Only keep this section if appropriate. Update link to correct sandbox.
-
-This App is installed in the Nautobot Community Sandbox found over at [demo.nautobot.com](https://demo.nautobot.com/)!
-
-> For a full list of all the available always-on sandbox environments, head over to the main page on [networktocode.com](https://www.networktocode.com/nautobot/sandbox-environments/).
+More detailed screenshots and usage examples can be found in the [Using the App](https://docs.nautobot.com/projects/device-broker/en/latest/user/app_use_cases/) section of the documentation.
 
 ## Documentation
 
-Full documentation for this App can be found over on the [Nautobot Docs](https://docs.nautobot.com) website:
+Complete documentation for the Device Broker app is available through the Nautobot documentation system:
 
-- [User Guide](https://docs.nautobot.com/projects/device-broker/en/latest/user/app_overview/) - Overview, Using the App, Getting Started.
-- [Administrator Guide](https://docs.nautobot.com/projects/device-broker/en/latest/admin/install/) - How to Install, Configure, Upgrade, or Uninstall the App.
-- [Developer Guide](https://docs.nautobot.com/projects/device-broker/en/latest/dev/contributing/) - Extending the App, Code Reference, Contribution Guide.
-- [Release Notes / Changelog](https://docs.nautobot.com/projects/device-broker/en/latest/admin/release_notes/).
-- [Frequently Asked Questions](https://docs.nautobot.com/projects/device-broker/en/latest/user/faq/).
+- **[User Guide](https://docs.nautobot.com/projects/device-broker/en/latest/user/app_overview/)** - App overview, getting started, and comprehensive usage patterns
+- **[Administrator Guide](https://docs.nautobot.com/projects/device-broker/en/latest/admin/install/)** - Installation, configuration, and maintenance procedures
+- **[Developer Guide](https://docs.nautobot.com/projects/device-broker/en/latest/dev/contributing/)** - Extending functionality, code reference, and contribution guidelines
+- **[Release Notes](https://docs.nautobot.com/projects/device-broker/en/latest/admin/release_notes/)** - Version history, changelog, and migration guides
+- **[FAQ](https://docs.nautobot.com/projects/device-broker/en/latest/user/faq/)** - Frequently asked questions and troubleshooting guidance
 
 ### Contributing to the Documentation
 
