@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "device-broker"
-version = "0.1.0"
+version = "0.2.0"
 description = "Platform-agnostic network device command execution and automation toolkit for Nautobot"
 authors = ["James Williams <thedude@jtdub.com>"]
 license = "Apache-2.0"
@@ -30,6 +30,7 @@ include = [
 python = ">=3.9,<3.13"
 # Used for local development
 nautobot = "^2.3.1"
+napalm = "^5.1.0"
 
 [tool.poetry.group.dev.dependencies]
 coverage = "*"

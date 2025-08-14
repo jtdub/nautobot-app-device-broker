@@ -1,10 +1,19 @@
 """Device Broker Jobs module for executing commands on network devices."""
 
 from django.db.models import Q
-from nautobot.apps.jobs import BooleanVar, Job, MultiObjectVar, ObjectVar, TextVar, register_jobs
+from nautobot.apps.jobs import (
+    BooleanVar,
+    ChoiceVar,
+    IntegerVar,
+    Job,
+    MultiObjectVar,
+    ObjectVar,
+    TextVar,
+    register_jobs,
+)
 from nautobot.dcim.models import Device, Location, Platform
 
-from device_broker.utils import get_platform_driver
+from device_broker.utils import get_group_credentials, get_platform_driver
 
 
 class DeviceBrokerJob(Job):
@@ -21,6 +30,18 @@ class DeviceBrokerJob(Job):
     location = ObjectVar(Location, required=False, description="Filter devices by location (optional).")
     config_mode = BooleanVar(required=True, label="Enter configuration mode?", default=False)
     commands = TextVar(required=True, label="List of Commands", description="Enter one command per line.")
+    connection_timeout = IntegerVar(
+        required=False,
+        default=30,
+        label="Connection Timeout (seconds)",
+        description="TCP connection timeout for device sessions.",
+    )
+    connection_method = ChoiceVar(
+        choices=[("netmiko", "Netmiko"), ("napalm", "NAPALM")],
+        default="netmiko",
+        label="Connection Method",
+        description="Choose the transport library used to connect to devices.",
+    )
 
     def _get_devices(self, devices, platform, location):
         """Merge device lists from the selected sources, deduplicate."""
@@ -31,11 +52,20 @@ class DeviceBrokerJob(Job):
         if location:
             filters |= Q(location=location)
         filtered_devices = queryset.filter(filters).distinct() if filters else Device.objects.none()
-        # Merge user-selected and filtered devices
         all_devices = set(devices or []) | set(filtered_devices)
         return list(all_devices)
 
-    def run(self, devices, platform, location, config_mode, commands, **kwargs):  # pylint: disable=too-many-arguments,arguments-differ
+    def run(
+        self,
+        devices,
+        platform,
+        location,
+        config_mode,
+        commands,
+        connection_timeout=30,
+        connection_method="netmiko",
+        **kwargs,
+    ):  # pylint: disable=too-many-arguments,arguments-differ
         """Execute commands on selected devices using their platform drivers.
 
         Args:
@@ -44,6 +74,8 @@ class DeviceBrokerJob(Job):
             location: Location filter for device selection
             config_mode: Whether to enter configuration mode
             commands: Commands to execute on devices
+            connection_timeout (int): TCP connection timeout in seconds (default 30)
+            connection_method (str): "netmiko" or "napalm" (default "netmiko")
             **kwargs: Additional keyword arguments
 
         Returns:
@@ -57,19 +89,34 @@ class DeviceBrokerJob(Job):
             return "No devices to execute against."
 
         for device in devices_to_run:
-            result = self._process_device(device, commands_list, config_mode)
+            result = self._process_device(
+                device,
+                commands_list,
+                config_mode,
+                connection_timeout=connection_timeout,
+                connection_method=connection_method,
+            )
             if result:
                 results.append(result)
 
         return "\n\n".join(results)
 
-    def _process_device(self, device, commands_list, config_mode):
+    def _process_device(  # pylint: disable=too-many-arguments
+        self,
+        device,
+        commands_list,
+        config_mode,
+        connection_timeout,
+        connection_method,
+    ):
         """Process a single device and execute commands.
 
         Args:
             device: Device object to process
             commands_list: List of commands to execute
             config_mode: Whether to enter configuration mode
+            connection_timeout (int): TCP connection timeout in seconds
+            connection_method (str): "netmiko" or "napalm"
 
         Returns:
             str or None: Result string if device processed, None if skipped
@@ -79,22 +126,22 @@ class DeviceBrokerJob(Job):
             self.logger.error("Device %s has no platform defined. Skipping.", device.display)
             return f"{device.display}: No platform defined, skipped."
 
-        # Retrieve credentials using the device's Secrets Group
         if hasattr(device, "secrets_group") and device.secrets_group:
-            creds = {secret.name: secret.get_secret_value() for secret in device.secrets_group.secrets.all()}
+            creds = get_group_credentials(device)
         else:
             self.logger.error("Device %s has no secrets group. Skipping.", device.display)
             return f"{device.display}: No secrets group, skipped."
 
-        # Get appropriate platform driver
-        driver = get_platform_driver(device.platform)
+        driver = get_platform_driver(device.platform, method=connection_method)
         if driver is None:
             self.logger.error("No driver found for platform: %s. Skipping device %s.", device.platform, device.display)
             return f"{device.display}: No platform driver, skipped."
 
         try:
             connection = driver.connect(
-                host=device.primary_ip.address if device.primary_ip else device.name, credentials=creds
+                host=str(device.primary_ip.address.ip) if device.primary_ip else device.name,
+                credentials=creds,
+                timeout=connection_timeout,
             )
             if config_mode:
                 connection.enter_config_mode()
@@ -111,4 +158,5 @@ class DeviceBrokerJob(Job):
             return f"{device.display}: Error - {str(exc)}"
 
 
+name = "Device Broker"  # pylint: disable=invalid-name
 register_jobs(DeviceBrokerJob)
